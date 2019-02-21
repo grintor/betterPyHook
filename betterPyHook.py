@@ -58,13 +58,13 @@ def listener():
 	mouse_hook_id = windll.user32.SetWindowsHookExA(WH_MOUSE_LL, mouse_ll_pointer, windll.kernel32.GetModuleHandleW(None), 0)
 	# Register to remove the hook when the interpreter exits.
 	atexit.register(windll.user32.UnhookWindowsHookEx, keyboard_hook_id)
+	atexit.register(windll.user32.UnhookWindowsHookEx, mouse_hook_id)
 	
 	while True:
 		msg = windll.user32.GetMessageW(None, 0, 0,0)
 		windll.user32.TranslateMessage(byref(msg))
 		windll.user32.DispatchMessageW(byref(msg))
 
-if __name__ == '__main__':
 
 	def print_keyboard_event(wParam, vkCode, scanCode, flags, time):
 		# flags  == 32  : alt_pressed
@@ -99,4 +99,5 @@ if __name__ == '__main__':
 		print ('flags: ' + str(flags))
 		print ('time: ' + str(time))
 		
+if __name__ == '__main__':
 	listener()
