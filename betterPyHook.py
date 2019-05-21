@@ -1,4 +1,4 @@
-# Microsoft API documentation: https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setwindowshookexw
+# Microsoft API documentation: https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-setwindowshookexa
 from ctypes import wintypes, windll, CFUNCTYPE, POINTER, c_int, c_void_p, byref, Structure, cast, c_uint, sizeof
 import atexit
 import threading
@@ -37,6 +37,9 @@ def GetLastInputInfo():
 	return lastInputInfo.dwTime
 
 def listener(keyboard_callback, mouse_callback):
+	global lastEventTime_global
+	lastEventTime_global = GetLastInputInfo()
+	
 	def watchDogThread():
 		global lastEventTime_global
 		#print('watchdog in progress...')
@@ -50,7 +53,7 @@ def listener(keyboard_callback, mouse_callback):
 	def chaosMonkey():
 		print('chaos started')
 		while True:
-			time.sleep(10)
+			time.sleep(30)
 			print('chaos strikes!')
 			unhook()
 		
@@ -76,12 +79,12 @@ def listener(keyboard_callback, mouse_callback):
 		windll.kernel32.GetModuleHandleW.restype = wintypes.HMODULE
 		windll.kernel32.GetModuleHandleW.argtypes = [wintypes.LPCWSTR]
 		# argtypes required for x64 because default values overflow
-		windll.user32.SetWindowsHookExW.argtypes = (c_int, wintypes.HANDLE, wintypes.HMODULE, wintypes.DWORD)
+		windll.user32.SetWindowsHookExA.argtypes = (c_int, wintypes.HANDLE, wintypes.HMODULE, wintypes.DWORD)
 
 		# Hook keyboard
-		keyboard_hook_id = windll.user32.SetWindowsHookExW(WH_KEYBOARD_LL, keyboard_ll_pointer, windll.kernel32.GetModuleHandleW(None), 0)
+		keyboard_hook_id = windll.user32.SetWindowsHookExA(WH_KEYBOARD_LL, keyboard_ll_pointer, windll.kernel32.GetModuleHandleW(None), 0)
 		# Hook mouse
-		mouse_hook_id = windll.user32.SetWindowsHookExW(WH_MOUSE_LL, mouse_ll_pointer, windll.kernel32.GetModuleHandleW(None), 0)
+		mouse_hook_id = windll.user32.SetWindowsHookExA(WH_MOUSE_LL, mouse_ll_pointer, windll.kernel32.GetModuleHandleW(None), 0)
 
 		orig_keyboard_hook_id = keyboard_hook_id
 		while True:
