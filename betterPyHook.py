@@ -42,8 +42,8 @@ def listener(keyboard_callback, mouse_callback):
 		#print('watchdog in progress...')
 		while True:
 			time.sleep(1)
-			if GetLastInputInfo() - 5000 > lastEventTime_global: # 5 secs ago
-				#print('hook event is 5 secs behind.')
+			if GetLastInputInfo() - 15000 > lastEventTime_global: # 15 secs ago
+				#print('hook event is 15 secs behind.')
 				rehook()
 				lastEventTime_global = GetLastInputInfo()
 					
